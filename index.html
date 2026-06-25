@@ -213,14 +213,14 @@ window.onload = function() {
     }
 };
 
-// --- 2. 模糊搜尋「表號」欄位（直接在記憶體中高效過濾） ---
+// --- 2. 模糊搜尋「表號」欄位（修正字體放大與引號優化版） ---
 function handleSearch() {
     const inputEl = document.getElementById('searchInput');
     const clearBtn = document.getElementById('clearSearchBtn');
     const query = inputEl.value.trim().toLowerCase();
     const container = document.getElementById('resultContainer');
     
-    // 💡 控制「✕」按鈕的顯現時機：只要框內有輸入字元就顯示
+    // 控制「✕」按鈕的顯現時機：只要框內有輸入字元就顯示
     if (inputEl.value.length > 0) {
         clearBtn.style.display = 'block';
     } else {
@@ -251,17 +251,30 @@ function handleSearch() {
         // 檢查中文欄位「經度」與「緯度」
         const hasGps = item["經度"] && item["緯度"] && parseFloat(item["經度"]) !== 0 && parseFloat(item["緯度"]) !== 0;
 
+        // 💡 關鍵修正：在這裡精準套用 water-text 與 meter-text 的加大外殼，這樣設定的大小才會真正亮起來！
         html += `
             <div class="location-card">
-                <div class="card-row"><span class="label">水號：</span><span class="value">${item["水號"] || '無資料'}</span></div>
-                <div class="card-row"><span class="label">表號：</span><span class="value" style="color:var(--primary-blue); font-size:22px;">${item["表號"] || '無資料'}</span></div>
-                <div class="card-row"><span class="label">經度：</span><span class="value">${hasGps ? item["經度"] : '無資料'}</span></div>
-                <div class="card-row"><span class="label">緯度：</span><span class="value">${hasGps ? item["緯度"] : '無資料'}</span></div>
+                <div class="card-row">
+                    <span class="label">水號：</span>
+                    <span class="water-text">${item["水號"] || '無資料'}</span>
+                </div>
+                <div class="card-row">
+                    <span class="label">表號：</span>
+                    <span class="meter-text">${item["表號"] || '無資料'}</span>
+                </div>
+                <div class="card-row">
+                    <span class="label">經度：</span>
+                    <span class="value">${hasGps ? item["經度"] : '無資料'}</span>
+                </div>
+                <div class="card-row">
+                    <span class="label">緯度：</span>
+                    <span class="value">${hasGps ? item["緯度"] : '無資料'}</span>
+                </div>
         `;
 
         if (hasGps) {
-            // 💡 修正引號與格式，100% 完美喚醒手機 Google Map App
-            const googleMapUrl = `http://googleusercontent.com/maps.google.com/?q=${item["緯度"]},${item["經度"]}`;
+            // 完美喚醒手機 Google Map App
+            const googleMapUrl = `https://www.google.com/maps/search/?api=1&query=${item["緯度"]},${item["經度"]}`;
             html += `
                 <a href="${googleMapUrl}" target="_blank" class="nav-button">
                     <span class="nav-icon">📍</span> 開啟 Google 地圖導航
